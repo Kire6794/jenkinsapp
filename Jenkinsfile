@@ -36,24 +36,15 @@ pipeline {
                 }
             }
             steps {
-                sh '''
-                # npm install netlify-cli
-                # node_modules/.bin/netlify --version
-                # echo "Deploying to Site ID: $NETLIFY_SITE_ID"
-                # node_modules/.bin/netlify status
-                # node_modules/.bin/netlify deploy --prod --dir=build
-                
-                #### custom docker image
-                #netlify --version
-                #echo "Deploying to Site ID: $NETLIFY_SITE_ID"
-                #netlify status
-                #netlify deploy --prod --dir=build
-
-                #### custom AWS image
-                aws --version
-
-                '''
+                withCredentials([usernamePassword(credentialsId: 'my-aws-jenkins', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')])
+                {
+                    sh '''
+                    aws --version
+                    aws s3 ls
+                    '''
+                }
             }
         }
+        
     }
 }
