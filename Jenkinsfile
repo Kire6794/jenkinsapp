@@ -5,29 +5,29 @@ pipeline {
     //     echo "NETLIFY_SITE_ID: ${NETLIFY_SITE_ID}"
     // }
     stages {
-        // stage('Docker'){
-        //     steps{
-        //         sh 'docker build -t my-docker-image .'
-        //     }
-        // }
-        // stage('Build') {
-        //     agent{
-        //         docker{
-        //             image 'node:20.19-alpine'
-        //         }
-        //     }
-        //     steps {
-        //         sh '''
-        //         test -f build/index.html
-        //         ls -la
-        //         node --version
-        //         npm --version
-        //         npm install
-        //         npm run build
-        //         ls -la
-        //         '''
-        //     }
-        // }
+        stage('Docker'){
+            steps{
+                sh 'docker build -t my-docker-image .'
+            }
+        }
+        stage('Build') {
+            agent{
+                docker{
+                    image 'node:20.19-alpine'
+                }
+            }
+            steps {
+                sh '''
+                test -f build/index.html
+                ls -la
+                node --version
+                npm --version
+                npm install
+                npm run build
+                ls -la
+                '''
+            }
+        }
         stage('Deploy AWS') {
             agent{
                 docker{
@@ -46,9 +46,9 @@ pipeline {
                     sh '''
                         aws --version
                         aws s3 ls
-                        echo "Hello S3!" > index.html
-                        aws s3 cp index.html s3://my-new-jenkins-2025320/index.html
-                       # aws s3 sync build s3://$AWS_S3_BUCKET
+                        # echo "Hello S3!" > index.html
+                        # aws s3 cp index.html s3://my-new-jenkins-2025320/index.html
+                        aws s3 sync build s3://$AWS_S3_BUCKET
                     '''
                 }
             }
