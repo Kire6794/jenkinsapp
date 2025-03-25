@@ -48,7 +48,7 @@ pipeline {
                         aws s3 ls
                         echo "Hello S3!" > index.html
                         aws s3 cp index.html s3://my-new-jenkins-2025320/index.html
-                        aws s3 sync build s3://$AWS_S3_BUCKET
+                       # aws s3 sync build s3://$AWS_S3_BUCKET
                     '''
                 }
             }
