@@ -5,11 +5,6 @@ pipeline {
     //     echo "NETLIFY_SITE_ID: ${NETLIFY_SITE_ID}"
     // }
     stages {
-        stage('Docker'){
-            steps{
-                sh 'docker build -t my-docker-image .'
-            }
-        }
         stage('Build') {
             agent{
                 docker{
