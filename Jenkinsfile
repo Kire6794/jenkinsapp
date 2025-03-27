@@ -1,9 +1,5 @@
 pipeline {
     agent any
-    // environment {
-    //     NETLIFY_SITE_ID = 'your-site-id'
-    //     echo "NETLIFY_SITE_ID: ${NETLIFY_SITE_ID}"
-    // }
     stages {
         stage('Build') {
             agent{
@@ -13,7 +9,6 @@ pipeline {
             }
             steps {
                 sh '''
-                test -f build/index.html
                 ls -la
                 node --version
                 npm --version
@@ -23,10 +18,24 @@ pipeline {
                 '''
             }
         }
+        stage('Test') {
+            agent {
+                docker {
+                    image 'node:22-alpine'
+                    reuseNode true
+                }
+            }
+
+            steps {
+                sh '''
+                    test -f build/index.html
+                    npm test
+                '''
+            }
+        }
         stage('Deploy AWS') {
             agent{
                 docker{
-                    //image 'node:20.19-alpine'
                     image 'amazon/aws-cli'
                     reuseNode true
                     args '--entrypoint=""'
