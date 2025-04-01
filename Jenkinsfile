@@ -47,27 +47,27 @@ pipeline {
                 }
             }
         }
-        // stage('Deploy to AWS') {
-        //     agent {
-        //         docker {
-        //             image 'amazon/aws-cli'
-        //             reuseNode true
-        //             args '-u root --entrypoint=""'
-        //         }
-        //     }
+        stage('Deploy to AWS') {
+            agent {
+                docker {
+                    image 'amazon/aws-cli'
+                    reuseNode true
+                    args '-u root --entrypoint=""'
+                }
+            }
             
-        //     steps {
-        //         withCredentials([usernamePassword(credentialsId: 'my-s3-key', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) 
-        //         {   
-        //             sh '''
-        //                 aws --version
-        //                 yum install jq -y
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'my-aws-jenkins', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) 
+                {   
+                    sh '''
+                        aws --version
+                        yum install jq -y
                         
-        //                 LATEST_TD_REVISION=$(aws ecs register-task-definition --cli-input-json file://aws/task-definition.json | jq '.taskDefinition.revision')
-        //                 aws ecs update-service --cluster my-new-Cluster-Prod --service my-new-Service-Prod --task-definition my-new-TaskDefinition-Prod:$LATEST_TD_REVISION
-        //             '''
-        //         }
-        //     }
-        // }
+                        LATEST_TD_REVISION=$(aws ecs register-task-definition --cli-input-json file://aws/task-definition.json | jq '.taskDefinition.revision')
+                        aws ecs update-service --cluster my-react-cluster-Prod-EM --service MyReactApp-Service-Prod --task-definition Temp-TaskDefinition-Prod:$LATEST_TD_REVISION
+                    '''
+                }
+            }
+        }
     }
 }
